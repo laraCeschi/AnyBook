@@ -1,0 +1,74 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tabBackground"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/textview_padding"
+        android:layout_weight="1"
+        android:background="@color/white">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_book"
+            android:layout_width="500dp"
+            android:layout_height="500dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@color/colorPrimaryLight"
+            android:minHeight="250dp"
+            android:minWidth="250dp"
+            android:onClick="scanBarcode"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:src="@mipmap/ic_white_plus"
+            app:backgroundTint="@color/colorPrimaryLight"
+            app:fabSize="normal" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="fill"
+        android:layout_marginBottom="@dimen/textview_padding"
+        android:layout_marginLeft="@dimen/textview_padding"
+        android:layout_marginRight="@dimen/textview_padding"
+        android:layout_marginTop="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:gravity="top">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/suggestion"
+            android:textSize="@dimen/text_size_medium"
+            />
+
+
+        <TextView
+            android:id="@+id/no_suggestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@string/suggestion_not_found"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/book_suggestion_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="horizontal" />
+
+    </LinearLayout>
+
+</LinearLayout>

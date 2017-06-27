@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Any Book</string>
+    <string name="suggestion">Libri suggeriti:</string>
+    <string name="search_hint">cerca un libro</string>
+    <string name="alternative_text_cover">copertina del libro</string>
+    <string name="version">Any Book: versione 1.0</string>
+    <string name="programmers">Prodotta da Lara Ceschi e Kristjan Gjika per il progetto del corso di Linguaggi di Programmazione per Sistemi Mobili e Tablet</string>
+    <string name="icons">Icone create da Daniel Bruce, Freepik, Icon Pond e Vectors Market per Flaticon (http://www.flaticon.com)</string>
+    <string name="reviewCredits">Recensioni ottenute da Goodreads (http://www.goodreads.com)</string>
+
+    <!-- nomi delle tab -->
+    <string name="fistTab"> Wishlist </string>
+    <string name="secondTab"> Home </string>
+    <string name="thirdTab"> Libreria </string>
+
+    <!-- nomi dei bottoni -->
+    <string name="button_settings"> Impostazioni </string>
+    <string name="button_wishlist"> Wishlist </string>
+    <string name="button_shelves"> Libreria </string>
+    <string name="button_scan"> Scansiona codice </string>
+    <string name="button_search"> Trova un libro </string>
+    <string name="button_home"> Home </string>
+    <string name="button_help">Aiuto</string>
+
+    <!-- titoli delle activity -->
+    <string name="title_activity_book">BookActivity</string>
+    <string name="title_activity_library"> Libreria </string>
+    <string name="title_activity_help">Aiuto</string>
+
+    <!-- costanti del drawer -->
+    <string name="drawer_open">open drawer</string>
+    <string name="drawer_close">close drawer</string>
+
+    <!-- stringhe del tipo risorsa non trovata -->
+    <string name="review_not_found">Nessuna recensione trovata</string>
+    <string name="title_not_found">Titolo non trovato</string>
+    <string name="description_not_found">Descrizione non trovata</string>
+    <string name="author_not_found">Autore non trovato</string>
+    <string name="rating_not_found">Voto medio non trovato</string>
+    <string name="empty_library">Questa libreria non contiene ancora titoli</string>
+    <string name="suggestion_not_found">Nessun suggerimento disponibile: aggiungi libri per ottenere nuovi consigli di lettura! </string>
+    <string name="publisher_not_found">Nessun editore trovato</string>
+    <string name="categories_not_found">Nessun genere trovato</string>
+    <string name="none"></string>
+    <string name="zero">0</string>
+
+</resources>

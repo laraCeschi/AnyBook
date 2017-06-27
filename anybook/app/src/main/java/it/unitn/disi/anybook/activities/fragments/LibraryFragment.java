@@ -1,0 +1,344 @@
+package it.unitn.disi.anybook.activities.fragments;
+
+import android.content.DialogInterface;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import it.unitn.disi.anybook.R;
+import it.unitn.disi.anybook.activities.adapters.LibraryAdapter;
+import it.unitn.disi.anybook.data.Library;
+import it.unitn.disi.anybook.databaseUtil.DbHelper;
+
+import java.util.ArrayList;
+
+import static it.unitn.disi.anybook.data.StaticStrings.IN_POSSESSO;
+import static it.unitn.disi.anybook.data.StaticStrings.WISHLIST;
+import static it.unitn.disi.anybook.dataHandler.LibraryHandler.deleteLibrary;
+import static it.unitn.disi.anybook.dataHandler.LibraryHandler.getAllLibrary;
+import static it.unitn.disi.anybook.dataHandler.LibraryHandler.getLibraryByName;
+
+/**
+ * Questa classe rappresenta il Fragment che viene utilizzato nella schermata di presentazione della
+ * lista di librerie.
+ */
+public class LibraryFragment extends Fragment {
+
+    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
+    private static final int SPAN_COUNT = 2;
+
+    private enum LayoutManagerType {
+        GRID_LAYOUT_MANAGER,
+        LINEAR_LAYOUT_MANAGER
+    }
+
+    protected LayoutManagerType mCurrentLayoutManagerType;
+    protected RecyclerView mRecyclerView;
+    protected LibraryAdapter mAdapter;
+    protected RecyclerView.LayoutManager mLayoutManager;
+    protected ArrayList<Library> mDataset;
+    protected AlertDialog.Builder alertDialog;
+    protected EditText newLibraryName;
+    protected LayoutInflater layoutInflater;
+    protected FloatingActionButton fab;
+    protected View view;
+    private View viewForConfermation;
+    private int posizione_da_eliminare = -1;
+    private AlertDialog.Builder alertDialogForConfermation;
+
+    /**
+     * Questo metodo crea il Fragment e inizializza il dataset della RecycleView ospitata
+     *
+     * @param savedInstanceState contiene i dati più recenti forniti a onSaveInstanceState().
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initDataset();
+
+    }
+
+    /**
+     * Questo metodo istanzia la grafica del Fragment.
+     *
+     * @param inflater           il LayoutInflater che viene utilizzato per "gonfiare" una view in un Fragment
+     * @param container          la view gerarchicamente superiore in cui va inserito il Fragment
+     * @param savedInstanceState l'eventuale stato precedente del Fragment
+     * @return la View della grafica del Fragment
+     */
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.library_fragment, container, false);
+
+        layoutInflater = inflater;
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.library_recyclerView);
+
+        mLayoutManager = new LinearLayoutManager(getActivity());
+
+        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+
+        if (savedInstanceState != null) {
+            mCurrentLayoutManagerType = (LayoutManagerType) savedInstanceState
+                    .getSerializable(KEY_LAYOUT_MANAGER);
+        }
+        setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
+
+        mAdapter = new LibraryAdapter(mDataset);
+        mRecyclerView.setAdapter(mAdapter);
+
+        fab = (FloatingActionButton) rootView.findViewById(R.id.add_library);
+
+        alertDialog = new AlertDialog.Builder(getContext());
+        view = layoutInflater.inflate(R.layout.dialog_layout, null);
+        alertDialog.setView(view);
+
+        alertDialog.setPositiveButton("Salva", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String newName = newLibraryName.getText().toString();
+                System.out.println("name = \"" + newName + "\"");
+                if (!newName.equals("")) {
+                    if (!mAdapter.addItem(newName)) {
+                        Toast nameAlreadyExists = Toast.makeText(getActivity(), "libreria già esistente", Toast.LENGTH_SHORT);
+                        nameAlreadyExists.show(); }
+                } else {
+                Toast noName = Toast.makeText(getActivity(), "impossibile salvare una libreria senza nome", Toast.LENGTH_SHORT);
+                noName.show(); }
+                dialog.dismiss();
+            }
+        });
+
+        newLibraryName = (EditText) view.findViewById(R.id.edit_library);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (v.getId()) {
+                    case R.id.add_library:
+                        removeView();
+                        alertDialog.setTitle("Nuova Libreria");
+                        newLibraryName.setText("");
+                        alertDialog.show();
+                        break;
+                }
+            }
+        });
+        initDialog();
+        initSwipe();
+        return rootView;
+    }
+
+    /**
+     * Questo metodo imposta il LayoutManager della RecycleView
+     *
+     * @param layoutManagerType Tipo di Layoutmanager che sostiusce il corrente LayoutManager
+     */
+    public void setRecyclerViewLayoutManager(LayoutManagerType layoutManagerType) {
+        int scrollPosition = 0;
+
+        // Se un LayoutManager è già presente, ottieni l'attuale posizione di scroll
+        if (mRecyclerView.getLayoutManager() != null) {
+            scrollPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager())
+                    .findFirstCompletelyVisibleItemPosition();
+        }
+
+        switch (layoutManagerType) {
+            case GRID_LAYOUT_MANAGER:
+                mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
+                mCurrentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
+                break;
+            case LINEAR_LAYOUT_MANAGER:
+                mLayoutManager = new LinearLayoutManager(getActivity());
+                mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+                break;
+            default:
+                mLayoutManager = new LinearLayoutManager(getActivity());
+                mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        }
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.scrollToPosition(scrollPosition);
+    }
+
+    /**
+     * Questo metodo salva lo stato corrente.
+     *
+     * @param savedInstanceState il Bundle in cui salvare lo stato corrente.
+     */
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    /**
+     * Questo metodo performa le azioni da compiere quando viene ripresa l'attività
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        initDataset();
+        mAdapter = new LibraryAdapter(mDataset);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    /**
+     * Questo metodo genera il dataset da inserire nella RecycleView
+     */
+    private void initDataset() {
+        DbHelper helper = new DbHelper(getContext());
+        mDataset = getAllLibrary(helper);
+        helper.close();
+    }
+
+    /**
+     *
+     * Questo metodo inserisce tutti i listener e la callback per il corretto funzionamento dell'eliminazione
+     * di un oggetto tramite swipe
+     */
+    private void initSwipe() {
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (direction == ItemTouchHelper.LEFT) {
+                    //da inserire questa chiamata a funzione nel listener del dialog
+                    //mAdapter.removeItem(position);
+                    if (mDataset.get(position).getName().equals(WISHLIST) || mDataset.get(position).getName().equals(IN_POSSESSO)) {
+                        Toast toast = Toast.makeText(getActivity(), "impossibile eliminare la libreria " + mDataset.get(position).getName(), Toast.LENGTH_SHORT);
+                        toast.show();
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        removeViewForConfermation();
+                        alertDialogForConfermation.setTitle("Confermare l'eliminazione");
+                        posizione_da_eliminare = position;
+                        alertDialogForConfermation.show();
+                    }
+                }//un possibile swipe a destra da inserire qui
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                Paint p = new Paint();
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+                    if (dX > 0) {
+                        p.setColor(Color.parseColor("#388E3C"));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        //icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_edit_white);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float) itemView.getTop() + width, (float) itemView.getLeft() + 2 * width, (float) itemView.getBottom() - width);
+                        //c.drawBitmap(icon,null,icon_dest,p);
+                    } else {
+                        p.setColor(Color.parseColor("#D32F2F"));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        //icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_delete_white);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width, (float) itemView.getTop() + width, (float) itemView.getRight() - width, (float) itemView.getBottom() - width);
+                        //c.drawBitmap(icon,null,icon_dest,p);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
+    }
+
+    /**
+     * Questo metodo ricarica i dati dal database
+     */
+    private void reloadData() {
+        initDataset();
+        mAdapter = new LibraryAdapter(mDataset);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    /**
+     * Questo metodo rimuove la view del dialog dal suo parent
+     */
+    public void removeView() {
+        if (view.getParent() != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            parent.removeView(view);
+        }
+    }
+
+    /**
+     * Questo metodo rimuvoe la view di conferma eliminazione dal suo parent
+     */
+    private void removeViewForConfermation() {
+        if (viewForConfermation.getParent() != null) {
+            ((ViewGroup) viewForConfermation.getParent()).removeView(viewForConfermation);
+        }
+    }
+
+    /**
+     * Questo metodo rimuove una libreria data la sua posizione
+     * @param position l'indice a cui si trova la libreria da eliminare
+     */
+    private void removeLibrary(int position) {
+        DbHelper helper = new DbHelper(getActivity());
+        Library libreriaDaEliminare = getLibraryByName(helper, mDataset.get(position).getName());
+        if (libreriaDaEliminare != null) {
+            deleteLibrary(helper, libreriaDaEliminare);
+        }
+        helper.close();
+    }
+
+    /**
+     * Questo metodo avvia il dialog per la conferma (o annullamento) dell'eliminazione di una libreria
+     */
+    private void initDialog() {
+        alertDialogForConfermation = new AlertDialog.Builder(this.getContext());
+        viewForConfermation = getActivity().getLayoutInflater().inflate(R.layout.dialog_layout_wishlist, null);
+        alertDialogForConfermation.setView(viewForConfermation);
+        alertDialogForConfermation.setPositiveButton("ELIMINA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                removeLibrary(posizione_da_eliminare);
+                reloadData();
+                mAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
+        alertDialogForConfermation.setNegativeButton("ANNULLA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
+        alertDialogForConfermation.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+
+}

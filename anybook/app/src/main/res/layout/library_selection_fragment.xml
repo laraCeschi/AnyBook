@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tabBackground"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/save_library_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:clickable="true"
+        app:fabSize="mini"
+        android:background="@color/colorPrimaryLight"
+        app:backgroundTint="@color/colorPrimaryLight"
+        android:src="@mipmap/ic_tick"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/delete_book_floating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/save_library_change"
+        android:layout_below="@+id/save_library_change"
+        android:layout_marginTop="30dp"
+        android:clickable="true"
+        app:backgroundTint="@color/red"
+        app:fabSize="mini"
+        android:src="@mipmap/ic_whitecross"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/white">
+
+
+
+            <LinearLayout
+                android:id="@+id/layout_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <RadioGroup
+                    android:id="@+id/radio_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
+                </RadioGroup>
+
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:id="@+id/layout_check"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@+id/layout_radio"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp">
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

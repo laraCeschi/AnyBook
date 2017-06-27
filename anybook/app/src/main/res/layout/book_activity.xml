@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="it.unitn.disi.anybook.activities.BookActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/book"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/little_margin"
+                android:orientation="vertical"
+                android:padding="@dimen/textview_padding">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="true"
+                    android:fadingEdgeLength="@dimen/textview_padding"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:weightSum="3">
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+
+                        <ImageView
+                            android:id="@+id/book_cover"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="10dp"
+                            android:adjustViewBounds="true"
+                            android:contentDescription="@string/alternative_text_cover"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_noimagefound"/>
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar_book_activity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:visibility="invisible" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/little_margin"
+                        android:layout_weight="2"
+                        android:background="@color/colorPrimary"
+                        android:orientation="vertical"
+                        android:padding="@dimen/little_margin">
+
+                        <TextView
+                            android:id="@+id/author"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/little_margin"
+                            android:layout_marginStart="@dimen/little_margin"
+                            android:text="@string/author_not_found"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:id="@+id/publisher"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/little_margin"
+                            android:layout_marginStart="@dimen/little_margin"
+                            android:text="@string/publisher_not_found"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:id="@+id/book_rating_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/little_margin"
+                            android:layout_marginStart="@dimen/little_margin"
+                            android:text="@string/rating_not_found"
+                            android:textColor="@color/white" />
+
+
+                        <android.support.v7.widget.AppCompatRatingBar
+                            android:id="@+id/book_rating"
+                            style="@style/Base.Widget.AppCompat.RatingBar.Indicator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:isIndicator="true"
+                            android:max="5"
+                            android:numStars="5"
+                            android:rating="0"
+                            android:scaleX="0.9"
+                            android:scaleY="0.9"
+                            android:stepSize="0.25" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/categories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/little_margin"
+                    android:text="@string/categories_not_found"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/little_margin"
+                    android:text="@string/description_not_found"
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/textview_padding"
+                   >
+
+
+                    <Button
+                        android:id="@+id/shareIt"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="@dimen/little_margin"
+                        android:layout_marginEnd="40dp"
+                        android:background="@drawable/ic_share"
+                        android:gravity="start"
+                        android:maxHeight="50dp"
+                        android:maxWidth="50dp"
+                        android:padding="8dp" />
+
+
+                    <TextView
+                        android:id="@+id/buyIt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="50dp"
+                        android:background="@drawable/button_rounded"
+                        android:padding="@dimen/little_margin"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_little"
+                        android:visibility="gone" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_collapseMode="none">
+
+            <TextView
+                android:id="@+id/titlebar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_not_found"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_big" />
+
+        </android.support.v7.widget.Toolbar>
+        /
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabBackground="@color/white"
+            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabIndicatorHeight="3pt"
+            app:tabSelectedTextColor="@color/selectedTabText"
+            app:tabTextColor="@color/black" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</android.support.design.widget.CoordinatorLayout>
